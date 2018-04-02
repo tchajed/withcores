@@ -34,17 +34,21 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--cpulist",
                         default=None,
                         help="CPUs to allow")
+    parser.add_argument("-n", "--dry-run",
+                        action="store_true",
+                        help="print CPUs to be enabled without changing anything")
     args = parser.parse_args()
 
     CPU_DIR = "/sys/devices/system/cpu"
 
     def set_core(cpu_dir, enabled):
+        if args.dry_run and enabled:
+            print("enabling " + cpu_dir)
+            return
         with open(join(CPU_DIR, cpu_dir, "online"), "w") as f:
             if enabled:
-                #print("enabling " + cpu_dir)
                 f.write("1\n")
             else:
-                #print("disabling " + cpu_dir)
                 f.write("0\n")
 
     should_enable = cpulist_filter(args.cpulist)
