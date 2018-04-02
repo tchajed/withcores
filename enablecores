@@ -44,8 +44,9 @@ if __name__ == "__main__":
     CPU_DIR = "/sys/devices/system/cpu"
 
     def set_core(cpu_dir, enabled):
-        if args.dry_run and enabled:
-            print("enabling " + cpu_dir)
+        if args.dry_run:
+            if enabled:
+                print("enabling " + cpu_dir)
             return
         with open(join(CPU_DIR, cpu_dir, "online"), "w") as f:
             if enabled:
