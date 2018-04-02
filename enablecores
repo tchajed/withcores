@@ -3,10 +3,10 @@
 import re
 
 def parse_cpurange(cpu_range):
-    m = re.match("[0-9]+", cpu_range)
+    m = re.match("^[0-9]+$", cpu_range)
     if m:
         return int(cpu_range)
-    m = re.match("(?P<start>]0-9]+)-(?P<end>[0-9]+)", )
+    m = re.match("^(?P<start>]0-9]+)-(?P<end>[0-9]+)$", cpu_range)
     if m:
         return list(range(m.group("start"), m.group("end")+1))
     raise ValueError("cpu_range {} is invalid".format(cpu_range))
@@ -38,13 +38,18 @@ if __name__ == "__main__":
 
     CPU_DIR = "/sys/devices/system/cpu"
 
-    f = cpulist_filter(args.cpulist)
+    def set_core(cpu_dir, enabled):
+        with open(join(CPU_DIR, cpu_dir, "online"), "w") as f:
+            if enabled:
+                #print("enabling " + cpu_dir)
+                f.write("1\n")
+            else:
+                #print("disabling " + cpu_dir)
+                f.write("0\n")
+
+    should_enable = cpulist_filter(args.cpulist)
     for cpu_dir in os.listdir(CPU_DIR):
         m = re.match("cpu(?P<cpu_id>[0-9]+)", cpu_dir)
         if m:
             cpu_id = int(m.group("cpu_id"))
-            with open(join(CPU_DIR, cpu_dir, "online"), "w") as f:
-                if f(cpu_id):
-                    f.write("1\n")
-                else:
-                    f.write("0\n")
+            set_core(cpu_dir, should_enable(cpu_id))
