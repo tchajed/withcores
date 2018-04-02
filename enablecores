@@ -8,7 +8,9 @@ def parse_cpurange(cpu_range):
         return int(cpu_range)
     m = re.match("^(?P<start>[0-9]+)-(?P<end>[0-9]+)$", cpu_range)
     if m:
-        return list(range(m.group("start"), m.group("end")+1))
+        start = int(m.group("start"))
+        end = int(m.group("end"))
+        return list(range(start, end+1))
     raise ValueError("cpu_range {} is invalid".format(cpu_range))
 
 def parse_cpulist(cpus):
