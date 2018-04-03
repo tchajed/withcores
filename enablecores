@@ -3,6 +3,8 @@
 import re
 
 def parse_cpurange(cpu_range):
+    if cpu_range == "":
+        return []
     m = re.match("^[0-9]+$", cpu_range)
     if m:
         return [int(cpu_range)]
