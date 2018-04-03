@@ -44,11 +44,14 @@ if __name__ == "__main__":
     CPU_DIR = "/sys/devices/system/cpu"
 
     def set_core(cpu_dir, enabled):
+        enable_file = join(CPU_DIR, cpu_dir, "online")
+        if not os.path.exists(enable_file):
+            return
         if args.dry_run:
             if enabled:
                 print("enabling " + cpu_dir)
             return
-        with open(join(CPU_DIR, cpu_dir, "online"), "w") as f:
+        with open(enable_file, "w") as f:
             if enabled:
                 f.write("1\n")
             else:
